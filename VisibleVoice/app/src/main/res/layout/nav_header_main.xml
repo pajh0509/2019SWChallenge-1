@@ -23,14 +23,6 @@
         android:src="@drawable/visible_logo" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:text="Slide Menu"
-        android:textColor="@color/design_default_color_primary"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
         android:id="@+id/userIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

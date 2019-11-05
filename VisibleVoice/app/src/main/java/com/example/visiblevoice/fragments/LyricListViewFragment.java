@@ -115,6 +115,9 @@ public class LyricListViewFragment extends Fragment {
         }
     }
 
+    /*
+    TODO: NullPointerException 처리하기 [최초 재생 목록 없을 때]
+     */
     private String readJsonFromFile(String filename) throws NullPointerException {
         try {
             InputStream is = new FileInputStream(new File(filename));

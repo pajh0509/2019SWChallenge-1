@@ -20,6 +20,7 @@ public class Record {
     public File png_file;
     public String full_path;
     public String file_name;
+    public String user_name;
 
     public Record(String file_name, String full_path){
         this.file_name=file_name;
@@ -60,6 +61,10 @@ public class Record {
     public void setPng_file(File png_file) {
         this.png_file = png_file;
     }
+
+    public String getUser_name() { return user_name; }
+
+    public void setUser_name(String user_name) { this.user_name = user_name; }
 }
 
 

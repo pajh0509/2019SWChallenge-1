@@ -21,6 +21,8 @@ public interface RecordDAO {
     public void deleteRecord(String fileName);
     @Query("UPDATE record SET wordCloudPath=:wordCloudPath WHERE fileName=:fileName")
     public void updateWCPath(String fileName,String wordCloudPath);
-    @Query("UPDATE record SET JsonPath=:JsonPath WHERE fileName=:fileName")
-    public void updateJSONPath(String fileName,String JsonPath);
+    @Query("UPDATE record SET jsonPath=:jsonPath WHERE fileName=:fileName")
+    public void updateJSONPath(String fileName,String jsonPath);
+    @Query("SELECT * FROM record WHERE filename=:filename AND username=:username")
+    public List<Record> findRecordFromFilenameAndUsername(String filename, String username);
 }

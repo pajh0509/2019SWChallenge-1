@@ -51,6 +51,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -191,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
         }
     }
     // 로그인
@@ -213,6 +214,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             autoLogin.commit();
 
                             updateFCMToken();
+
+                            makeDirectory();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         } else {
@@ -225,6 +228,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
+
+    private void makeDirectory() {
+        File directory = new File(getFilesDir() + "/" + AppDataInfo.Login.userID);
+        if(directory.exists() && directory.isDirectory()) return;
+
+        if(directory.mkdir()) {
+            Log.d("mkdir", "디렉토리 만들기 성공");
+            Log.d("mkdir", "path: " + directory.getAbsolutePath());
+        }
+        else
+            Log.d("mkdir", "디렉토리 만들기 실패");
+    }
+
     private void updateFCMToken() {
         Map<String, String> user_data = new HashMap<>();
         user_data.put("deviceToken",deviceToken);
@@ -327,22 +343,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            user = mAuth.getCurrentUser();
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
+                    user = mAuth.getCurrentUser();
 
-                            Log.d("song", "user:" + user);
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("email", user.getEmail());
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Log.d("song", "Authentication Failed");
-                        }
-                    }
-                });
+                    Log.d("song", "user:" + user);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("email", user.getEmail());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.d("song", "Authentication Failed");
+                }
+            }
+        });
     }
 
     @Override

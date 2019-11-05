@@ -9,9 +9,9 @@
             android:title="@string/nav_item_logout" />
     </group>
 
-    <item android:title="@string/nav_sub_menu">
+    <!--item android:title="@string/nav_sub_menu">
 
-    </item>
+    </item-->
     <item
         android:id="@+id/FileDownloadActivitybtn"
         android:checked="true"

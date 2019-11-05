@@ -2,6 +2,8 @@ package com.example.visiblevoice;
 
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 /**
@@ -12,6 +14,12 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+        String path = "aa/bb/cc/dd/ee.txt";
+        String[] splits = path.split("/");
+        File f = new File(path);
+
+
+        assertEquals("ee", splits[splits.length-1].split("\\.")[0]);
+        assertEquals("ee", f.getName().split("\\.")[0]);
     }
 }

@@ -74,6 +74,10 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         /*String jsonFileName = jsontextView.getText().toString();
         String fileName = jsonFileName.substring(0,jsonFileName.length()-5);*/
 
+
+        /*
+            현재 재생목록 저장.
+         */
         musicListListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -103,16 +107,17 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                     ne.printStackTrace();
                 }
                 setCurrentmusic.commit();
-                /*
-                To do:
-                나중에 main변경후 finish로 수정해야됨.
-                 */
-                //startActivity(new Intent(FileListActivity.this, MainActivity.class));
+
                 ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
                 finish();
             }
         });
+
         musicListListView.setLongClickable(true);
+
+        /*
+            목록 삭제 리스너
+         */
         musicListListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
 
             private String fileName;
@@ -157,29 +162,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
 
                 alert.show();
                 listAdapter.notifyDataSetChanged();
-               /* AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                builder.setTitle("파일 삭제").setMessage("선택하신 파일 "+musicListController.getFilename(position)+"을 변환하시겠습니까?");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
-                        recordDAO.deleteRecord(fileName);
-                        musicListController.removeRecord(position);
-                        //updateMusicList();
-                        listAdapter.notifyDataSetChanged();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                Log.d("long","alertdialog");*/
+
                 return true;
             }
         });

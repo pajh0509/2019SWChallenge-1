@@ -12,7 +12,9 @@ public class Record {
     public String fileName;
     private String audioPath;
     private String wordCloudPath;
-    private String JsonPath;
+    private String jsonPath;
+    @NonNull
+    private String username;
 
     @NonNull
     public String getFileName() {  return fileName;  }
@@ -27,8 +29,13 @@ public class Record {
 
     public void setWordCloudPath(String wordCloudPath) {  this.wordCloudPath = wordCloudPath; }
 
-    public String getJsonPath() { return JsonPath; }
+    public String getJsonPath() { return jsonPath; }
 
-    public void setJsonPath(String jsonPath) {JsonPath = jsonPath; }
+    public void setJsonPath(String jsonPath) {this.jsonPath = jsonPath; }
+
+    @NonNull
+    public String getUsername() { return username; }
+
+    public void setUsername(@NonNull String username) {this.username = username; }
 
 }

@@ -1,10 +1,12 @@
 package com.example.visiblevoice.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -33,6 +35,7 @@ import com.example.visiblevoice.Client.ServerInfo;
 import com.example.visiblevoice.db.AppDatabase;
 import com.example.visiblevoice.db.RecordDAO;
 import com.example.visiblevoice.models.Record;
+import com.example.visiblevoice.utils.FileManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,15 +67,22 @@ public class FileUploadActivity extends AppCompatActivity {
     private ListView listView;
 
     private ArrayAdapter<String> listAdapter;
+    private ProgressDialog progressDialog;
 
     private SharedPreferences userData;
     private SharedPreferences fileData;
+
+
     private RecordDAO recordDAO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_upload);
+
+        progressDialog = new ProgressDialog(this);
+
+
 
         // get read external storage permission
         if (ContextCompat.checkSelfPermission(FileUploadActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -170,39 +180,10 @@ public class FileUploadActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int id)
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
-                    sendData(fileRoot);
-                    //Record record = new Record(fileName, fileRoot);
-                    //musicListController.addMusic(record);
-                    //insert
-                    SharedPreferences.Editor file_data = fileData.edit();
-                    file_data.putString(AppDataInfo.File.music_path,fileRoot.getAbsolutePath());
-                    file_data.commit();
 
-                    // make file name string
-                    String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
-                    Log.d("song","fname : "+fname);
+                    FileUploadAsycTask task = new FileUploadAsycTask();
+                    task.execute(rootPath, fileRoot.getName());
 
-
-                    // create new folder for uploaded file
-                    newFolderPath=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/visibleVoice/"+fname;
-                    File dir = new File(newFolderPath);
-                    dir.mkdir();
-                    if (!dir.exists()) { // check
-                        Log.d("song","fail to create new folder");
-                    }else{
-                        Log.d("song","success to create new folder");
-
-                        // create new file and write file full path
-                        try{
-                            byte[] data=rootPath.getBytes();
-                            FileOutputStream fos=new FileOutputStream(newFolderPath+"/path.txt");
-                            for(int i=0;i<data.length;i++)
-                                fos.write(data[i]);
-                            fos.close();
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -291,31 +272,6 @@ public class FileUploadActivity extends AppCompatActivity {
         setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
     }
 
-
-    /** 웹 서버로 데이터 전송 */
-    private void sendData(final File file) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String username = userData.getString(AppDataInfo.Login.userID, null);
-                        //VVpath = rootPath + "/"+"VisibleVoice";
-                        SFTPClient sftpClient = new SFTPClient();
-
-                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,AppDataInfo.Path.VisibleVoiceFolder+"/"+ServerInfo.privatekey);
-                        sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
-                        //Log.d()
-                        sftpClient.upload(username,file);
-                        httpConn.requestWebServer(username,file.getName(), callback);
-                    }
-                });
-            }
-        }).start();
-
-    }
-
     private final Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
@@ -344,6 +300,41 @@ public class FileUploadActivity extends AppCompatActivity {
         }
     };
 
+    private class FileUploadAsycTask extends AsyncTask<String, Void, Boolean> {
 
+        @Override
+        protected void onPreExecute() {
+            /*
+            TODO: 네트워킹 UI 설정
+             */
+            super.onPreExecute();
+            progressDialog.setMessage("업로드중입니다.. 기다려 주세요...");
+            progressDialog.show();
+        }
 
+        /*
+            result = false (중복된 파일이 저장되어있으면)
+            result = true (중복된 파일이 저장되어있지 않으면)
+         */
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            FileManager fileManager = new FileManager(getApplicationContext(), getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE),
+                    getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE), getFilesDir().getAbsolutePath());
+            boolean result = fileManager.fileUpload(strings[0]);
+
+            if(result) httpConn.requestWebServer(userData.getString(AppDataInfo.Login.userID, null), strings[1], callback);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean results) {
+            super.onPostExecute(results);
+
+            progressDialog.dismiss();
+            Log.d("dong", "progressDialog 출력완료");
+            //Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
+            Log.d("dong", "토스트 출력 완료");
+        }
+    }
 }

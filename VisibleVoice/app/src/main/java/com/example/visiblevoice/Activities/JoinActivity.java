@@ -164,6 +164,8 @@ public class JoinActivity extends AppCompatActivity {
                                             Log.w("firestore", "Error writing document", e);
                                         }
                                     });
+                            progressDialog.dismiss();
+                            finish();
                             //startActivity(new Intent(JoinActivity.this, LoginActivity.class));
                         } else {
                             // 회원가입 실패
@@ -171,7 +173,7 @@ public class JoinActivity extends AppCompatActivity {
                             Toast.makeText(JoinActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             //finish();
                         }
-                        finish();
+
                         progressDialog.dismiss();
 
                     }
