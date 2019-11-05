@@ -12,6 +12,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management' 
 apply plugin: 'application'
+
         
 group 'VisibleSound'
 version '1.0-SNAPSHOT'
@@ -19,6 +20,7 @@ sourceCompatibility = 1.8
 mainClassName = "com.visiblesound.Application"
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -39,4 +41,16 @@ dependencies {
     //google client lib for upload to bucket
     compile 'com.google.cloud:google-cloud-bigquery:1.85.0'
     compile 'com.google.cloud:google-cloud-storage:1.61.0'
+    // Add the Firebase SDK for Google Analytics
+    //implementation 'com.google.firebase:firebase-analytics:17.2.1'
+
+    // Add the SDKs for any other Firebase products you want to use in your app
+    // For example, to use Firebase Authentication and Cloud Firestore
+    //implementation 'com.google.firebase:firebase-admin:6.11.0'
+    //implementation 'com.google.firebase:firebase-auth:19.1.0'
+    //implementation 'com.google.firebase:firebase-firestore:21.2.1'
+    // Add the Firebase SDK for Google Analytics
+    // Add the SDKs for any other Firebase products you want to use in your app
+    // For example, to use Firebase Authentication and Cloud Firestore
+    implementation 'com.google.firebase:firebase-admin:6.11.0'
 }
